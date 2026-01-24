@@ -17,6 +17,7 @@ Singleton {
             property int columns: 5
             property real scale: 0.16
             property bool enable: true
+            property bool hideEmptyRows: true  // Hide workspace rows with no windows
         }
         
         property QtObject hacks: QtObject {

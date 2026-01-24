@@ -41,6 +41,33 @@ Item {
     property int draggingFromWorkspace: -1
     property int draggingTargetWorkspace: -1
 
+    // Calculate which rows have windows or current workspace
+    property var rowsWithContent: {
+        if (!Config.options.overview.hideEmptyRows) return null;
+        
+        let rows = new Set();
+        const firstWorkspace = root.workspaceGroup * root.workspacesShown + 1;
+        const lastWorkspace = (root.workspaceGroup + 1) * root.workspacesShown;
+        
+        // Add row containing current workspace
+        const currentWorkspace = monitor.activeWorkspace?.id ?? 1;
+        if (currentWorkspace >= firstWorkspace && currentWorkspace <= lastWorkspace) {
+            rows.add(Math.floor((currentWorkspace - firstWorkspace) / Config.options.overview.columns));
+        }
+        
+        // Add rows with windows
+        for (let addr in windowByAddress) {
+            const win = windowByAddress[addr];
+            const wsId = win?.workspace?.id;
+            if (wsId >= firstWorkspace && wsId <= lastWorkspace) {
+                const rowIndex = Math.floor((wsId - firstWorkspace) / Config.options.overview.columns);
+                rows.add(rowIndex);
+            }
+        }
+        
+        return rows;
+    }
+
     implicitWidth: overviewBackground.implicitWidth + Appearance.sizes.elevationMargin * 2
     implicitHeight: overviewBackground.implicitHeight + Appearance.sizes.elevationMargin * 2
 
@@ -75,6 +102,9 @@ Item {
                     id: row
                     property int rowIndex: index
                     spacing: workspaceSpacing
+                    visible: !Config.options.overview.hideEmptyRows || 
+                             (root.rowsWithContent && root.rowsWithContent.has(rowIndex))
+                    height: visible ? implicitHeight : 0
 
                     Repeater { // Workspace repeater
                         model: Config.options.overview.columns

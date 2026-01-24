@@ -26,6 +26,8 @@ https://github.com/user-attachments/assets/79ceb141-6b9e-4956-8e09-aaf72b66550c
 ## ✨ Features
 
 - 🖼️ Visual workspace overview showing all workspaces and windows
+- 🖥️ Multi-monitor support with proper scaling and vertical/rotated monitors [in experimental branch]
+- 📐 Smart row hiding - optionally hide empty workspace rows
 - 🎯 Click windows to focus them
 - 🖱️ Middle-click windows to close them  
 - 🔄 Drag and drop windows between workspaces
@@ -122,6 +124,7 @@ property QtObject overview: QtObject {
     property int columns: 5     // Number of workspace columns (10 total workspaces)
     property real scale: 0.16   // Overview scale factor (0.1-0.3, smaller = more compact)
     property bool enable: true
+    property bool hideEmptyRows: true  // Hide workspace rows with no windows (recommended!)
 }
 ```
 
@@ -129,6 +132,12 @@ property QtObject overview: QtObject {
 - **Too small?** Increase `scale` (try 0.20 or 0.25)
 - **Too big?** Decrease `scale` (try 0.12 or 0.14)
 - **More workspaces?** Change `rows` and `columns` (e.g., 3 rows × 4 columns = 12 workspaces)
+
+**Hide empty workspace rows:**
+- Set `hideEmptyRows: true` to automatically hide rows that have no windows
+- Keeps your overview clean by only showing rows with active workspaces
+- The current workspace row is always visible, even if empty
+- Great for 2-row setups where you rarely use workspaces 6-10
 
 ### Position
 
