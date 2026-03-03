@@ -51,6 +51,18 @@ yay -S quickshell-overview-git
 paru -S quickshell-overview-git
 ```
 
+On AUR installs, module files are package-managed under:
+
+```text
+/etc/xdg/quickshell/overview/
+```
+
+Put your custom settings in:
+
+```text
+~/.config/quickshell/overview/config.json
+```
+
 Then add the keybind and auto-start to your Hyprland config (see Setup steps 2-4 below).
 
 ### Prerequisites
@@ -61,10 +73,12 @@ Then add the keybind and auto-start to your Hyprland config (see Setup steps 2-4
 
 ### Setup
 
-1. **Clone this repository** to your Quickshell config directory:
+1. **Install module files** (choose one):
+   - **Git clone (manual install):**
    ```bash
    git clone https://github.com/Shanu-Kumawat/quickshell-overview ~/.config/quickshell/overview
    ```
+   - **AUR package:** use the command above (`yay -S quickshell-overview-git` or `paru -S ...`)
 
 2. **Add keybind** to your Hyprland config (`~/.config/hypr/hyprland.conf`):
    ```conf
@@ -128,20 +142,43 @@ home.packages = with pkgs; [
 
 ## ⚙️ Configuration
 
-> **⚠️ Want to change the size, position, or number of workspaces?**  
-> Edit `~/.config/quickshell/overview/common/Config.qml` - it's all there!
+> **⚠️ Want to change size, position, workspace count, or toggles?**
+> Create/edit `~/.config/quickshell/overview/config.json`.
+
+`Config.qml` inside the module is now treated as defaults. User overrides are read from:
+
+- `$XDG_CONFIG_HOME/quickshell/overview/config.json`
+- fallback: `~/.config/quickshell/overview/config.json`
+
+> **Note:** After editing `config.json`, manually restart overview for changes to apply:
+> `qs ipc -c overview call overview close && qs -c overview`
+
+### Quick Start
+
+```bash
+mkdir -p ~/.config/quickshell/overview
+cp /etc/xdg/quickshell/overview/config.example.json ~/.config/quickshell/overview/config.json
+```
+
+If you installed from git clone instead of AUR, copy from your repo path:
+
+```bash
+cp ~/.config/quickshell/overview/config.example.json ~/.config/quickshell/overview/config.json
+```
 
 ### Workspace Grid
 
-Edit `~/.config/quickshell/overview/common/Config.qml`:
+Edit `~/.config/quickshell/overview/config.json`:
 
-```qml
-property QtObject overview: QtObject {
-    property int rows: 2        // Number of workspace rows
-    property int columns: 5     // Number of workspace columns (10 total workspaces)
-    property real scale: 0.16   // Overview scale factor (0.1-0.3, smaller = more compact)
-    property bool enable: true
-    property bool hideEmptyRows: true  // Hide workspace rows with no windows (recommended!)
+```json
+{
+  "overview": {
+    "rows": 2,
+    "columns": 5,
+    "scale": 0.16,
+    "enable": true,
+    "hideEmptyRows": true
+  }
 }
 ```
 
@@ -159,13 +196,38 @@ property QtObject overview: QtObject {
 
 ### Position
 
-Edit `~/.config/quickshell/overview/modules/overview/Overview.qml` (line ~111):
+Edit `~/.config/quickshell/overview/config.json`:
 
-```qml
-anchors {
-    horizontalCenter: parent.horizontalCenter
-    top: parent.top
-    topMargin: 100  // Change this value to move up/down
+```json
+{
+  "position": {
+    "topMargin": 100
+  }
+}
+```
+
+Increase `topMargin` to move the overview down. Decrease it to move up.
+
+### Full Example
+
+```json
+{
+  "appearance": {
+    "useMatugenColors": false
+  },
+  "overview": {
+    "rows": 2,
+    "columns": 5,
+    "scale": 0.16,
+    "enable": true,
+    "hideEmptyRows": true
+  },
+  "position": {
+    "topMargin": 100
+  },
+  "hacks": {
+    "arbitraryRaceConditionDelay": 150
+  }
 }
 ```
 
@@ -196,10 +258,12 @@ input_path  = "./templates/quickshell-overview.qml"
 output_path = "~/.config/quickshell/overview/common/Appearance.colors.qml"
 ```
 
-**4. Enable it** in `~/.config/quickshell/overview/common/Config.qml`:
-```qml
-property QtObject appearance: QtObject {
-    property bool useMatugenColors: true  // change from false to true
+**4. Enable it** in `~/.config/quickshell/overview/config.json`:
+```json
+{
+  "appearance": {
+    "useMatugenColors": true
+  }
 }
 ```
 
@@ -239,10 +303,11 @@ The following features were removed to make it standalone:
 ~/.config/quickshell/overview/
 ├── shell.qml                      # Main entry point
 ├── README.md                      # This file
+├── config.example.json            # User override template
 ├── hyprland-config.conf          # Configuration reference
 ├── common/
 │   ├── Appearance.qml            # Theme and styling
-│   ├── Config.qml                # Configuration options
+│   ├── Config.qml                # Default config + user override loader
 │   ├── functions/
 │   │   └── ColorUtils.qml        # Color manipulation utilities
 │   └── widgets/

@@ -34,8 +34,8 @@ Scope {
             anchors {
                 top: true
                 bottom: true
-                left: !(Config?.options.overview.enable ?? true) 
-                right: !(Config?.options.overview.enable ?? true) 
+                left: !(Config?.options.overview.enable ?? true)
+                right: !(Config?.options.overview.enable ?? true)
             }
 
             HyprlandFocusGrab {
@@ -92,7 +92,7 @@ Scope {
                     const currentGroup = Math.floor((currentId - 1) / workspacesPerGroup);
                     const minWorkspaceId = currentGroup * workspacesPerGroup + 1;
                     const maxWorkspaceId = minWorkspaceId + workspacesPerGroup - 1;
-                    
+
                     // When hideEmptyRows is enabled, constrain navigation to current row
                     const currentRow = Math.floor((currentId - minWorkspaceId) / Config.options.overview.columns);
                     const rowMinId = minWorkspaceId + currentRow * Config.options.overview.columns;
@@ -152,7 +152,7 @@ Scope {
                 anchors {
                     horizontalCenter: parent.horizontalCenter
                     top: parent.top
-                    topMargin: 100
+                    topMargin: Config.options.position.topMargin
                 }
 
                 Loader {
@@ -166,7 +166,7 @@ Scope {
             }
         }
     }
-    
+
     IpcHandler {
         target: "overview"
 

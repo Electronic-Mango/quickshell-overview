@@ -1,0 +1,18 @@
+{
+  "appearance": {
+    "useMatugenColors": false
+  },
+  "overview": {
+    "rows": 2,
+    "columns": 5,
+    "scale": 0.16,
+    "enable": true,
+    "hideEmptyRows": true
+  },
+  "position": {
+    "topMargin": 100
+  },
+  "hacks": {
+    "arbitraryRaceConditionDelay": 150
+  }
+}
