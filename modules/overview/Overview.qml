@@ -43,7 +43,8 @@ Scope {
                 property bool canBeActive: root.monitorIsFocused
                 active: false
                 onCleared: () => {
-                    if (!active)
+                    // Only the monitor that owns the grab may close the overview
+                    if (!active && canBeActive)
                         GlobalStates.overviewOpen = false;
                 }
             }
@@ -53,6 +54,21 @@ Scope {
                 function onOverviewOpenChanged() {
                     if (GlobalStates.overviewOpen) {
                         delayedGrabTimer.start();
+                    }
+                }
+            }
+
+            // Re-evaluate grab ownership when focused monitor changes
+            Connections {
+                target: Hyprland
+                function onFocusedMonitorChanged() {
+                    if (!GlobalStates.overviewOpen)
+                        return;
+                    // Transfer the grab to the newly focused monitor
+                    if (root.monitorIsFocused && !grab.active) {
+                        grab.active = true;
+                    } else if (!root.monitorIsFocused && grab.active) {
+                        grab.active = false;
                     }
                 }
             }
