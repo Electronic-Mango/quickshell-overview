@@ -29,10 +29,10 @@ Item {
     property real scale: Config.options.overview.scale
     property color activeBorderColor: Appearance.colors.colSecondary
 
-    property real workspaceImplicitWidth: (monitorData?.transform % 2 === 1) ? 
+    property real workspaceImplicitWidth: (monitorData?.transform % 2 === 1) ?
         ((monitor.height / monitor.scale - (monitorData?.reserved?.[0] ?? 0) - (monitorData?.reserved?.[2] ?? 0)) * root.scale) :
         ((monitor.width / monitor.scale - (monitorData?.reserved?.[0] ?? 0) - (monitorData?.reserved?.[2] ?? 0)) * root.scale)
-    property real workspaceImplicitHeight: (monitorData?.transform % 2 === 1) ? 
+    property real workspaceImplicitHeight: (monitorData?.transform % 2 === 1) ?
         ((monitor.width / monitor.scale - (monitorData?.reserved?.[1] ?? 0) - (monitorData?.reserved?.[3] ?? 0)) * root.scale) :
         ((monitor.height / monitor.scale - (monitorData?.reserved?.[1] ?? 0) - (monitorData?.reserved?.[3] ?? 0)) * root.scale)
 
@@ -314,17 +314,17 @@ Item {
     // Calculate which rows have windows or current workspace
     property var rowsWithContent: {
         if (!Config.options.overview.hideEmptyRows) return null;
-        
+
         let rows = new Set();
         const firstWorkspace = root.workspaceGroup * root.workspacesShown + 1 + workspaceOffset;
         const lastWorkspace = (root.workspaceGroup + 1) * root.workspacesShown + workspaceOffset;
-        
+
         // Add row containing current workspace
         const currentWorkspace = effectiveActiveWorkspaceId;
         if (currentWorkspace >= firstWorkspace && currentWorkspace <= lastWorkspace) {
             rows.add(getWorkspaceRow(currentWorkspace));
         }
-        
+
         // Add rows with windows
         for (let addr in windowByAddress) {
             const win = windowByAddress[addr];
@@ -334,7 +334,7 @@ Item {
                 rows.add(rowIndex);
             }
         }
-        
+
         return rows;
     }
 
@@ -384,6 +384,12 @@ Item {
             root.glassMode ? root.glassBorderOpacity : root.effectivePanelOpacity
         )
 
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+            onPressed: mouse => mouse.accepted = true
+        }
+
         Rectangle {
             visible: root.glassMode
             anchors.fill: parent
@@ -422,7 +428,7 @@ Item {
                     id: row
                     property int rowIndex: index
                     spacing: workspaceSpacing
-                    visible: !Config.options.overview.hideEmptyRows || 
+                    visible: !Config.options.overview.hideEmptyRows ||
                              (root.rowsWithContent && root.rowsWithContent.has(rowIndex))
                     height: visible ? implicitHeight : 0
 
@@ -957,17 +963,17 @@ Item {
                             const addrB = `0x${b.HyprlandToplevel.address}`
                             const winA = windowByAddress[addrA]
                             const winB = windowByAddress[addrB]
-                            
+
                             // 1. Pinned windows are always on top
                             if (winA?.pinned !== winB?.pinned) {
                                 return winA?.pinned ? 1 : -1
                             }
-                            
+
                             // 2. Floating windows above tiled windows
                             if (winA?.floating !== winB?.floating) {
                                 return winA?.floating ? 1 : -1
                             }
-                            
+
                             // 3. Within same category, sort by focus history
                             // Lower focusHistoryID = more recently focused = higher in stack
                             return (winB?.focusHistoryID ?? 0) - (winA?.focusHistoryID ?? 0)

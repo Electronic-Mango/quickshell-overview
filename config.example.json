@@ -47,6 +47,7 @@
     "scale": 0.16,
     "enable": true,
     "hideEmptyRows": true,
+    "closeOnFocusLoss": true,
     "useWorkspaceMap": false,
     "workspaceMap": [0, 10],
     "orderRightLeft": false,

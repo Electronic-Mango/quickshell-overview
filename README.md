@@ -33,6 +33,7 @@ https://github.com/user-attachments/assets/e8f392d7-d831-4dec-9cd3-fb93d1ccc21c
 - 🖱️ Middle-click windows to close them  
 - 🔄 Drag and drop windows between workspaces
 - ⌨️ Keyboard navigation (Arrow keys, vim keys, number shortcuts)
+- 🖱️ Auto-close on focus loss / outside click
 - 💡 Hover tooltips showing window information
 - 🎨 Material Design 3 theming
 - ⚡ Smooth animations and transitions
@@ -132,6 +133,7 @@ home.packages = with pkgs; [
 | **1-9, 0** | Jump to Nth workspace in current group (0 = 10th) |
 | **Mouse wheel on grid** | Move across all normal workspaces, wrapping from last to first |
 | **Escape / Enter** | Close the overview |
+| **Click outside overview** | Close the overview when `overview.closeOnFocusLoss` is enabled (default) |
 | **Click workspace** | Switch to that workspace |
 | **Click window** | Focus that window |
 | **Middle-click window** | Close that window |
@@ -179,6 +181,7 @@ Edit `~/.config/quickshell/overview/config.json`:
     "scale": 0.16,
     "enable": true,
     "hideEmptyRows": true,
+    "closeOnFocusLoss": true,
     "useWorkspaceMap": false,
     "workspaceMap": [0, 10],
     "orderRightLeft": false,
@@ -217,6 +220,7 @@ Edit `~/.config/quickshell/overview/config.json`:
 - **Too big?** Decrease `scale` (try 0.12 or 0.14)
 - **More workspaces?** Change `rows` and `columns` (e.g., 3 rows × 4 columns = 12 workspaces)
 - **Reverse order?** Set `orderRightLeft` and/or `orderBottomUp` to `true`
+- **Prefer the overview to stay open after outside clicks/focus changes?** Set `closeOnFocusLoss` to `false`
 - **Per-monitor workspace groups?** Enable `useWorkspaceMap` and set `workspaceMap` (e.g. `[0,10]`)
 - **Show special workspaces below grid?** Keep `showSpecialWorkspaces: true` and optionally prefill `specialWorkspaces`
 - **Lower memory use?** Set `previewMode` to `event` and `includeInactiveMonitorPreviews` to `false`
@@ -228,6 +232,12 @@ Edit `~/.config/quickshell/overview/config.json`:
 - The current workspace row is always visible, even if empty
 - Arrow key navigation (left/right) stays within the current row when enabled
 - Great for 2-row setups where you rarely use workspaces 6-10
+
+**Close on focus loss / outside click:**
+- `closeOnFocusLoss` defaults to `true`
+- When enabled, clicking outside the overview closes it, similar to menus, dropdowns, and launchers
+- The overview also closes when its Hyprland focus grab is cleared
+- Set `closeOnFocusLoss: false` if you want the previous behavior where the overview can remain open after focus changes
 
 ### Position
 
@@ -467,6 +477,7 @@ Low-memory preset:
     "scale": 0.16,
     "enable": true,
     "hideEmptyRows": true,
+    "closeOnFocusLoss": true,
     "useWorkspaceMap": false,
     "workspaceMap": [0, 10],
     "orderRightLeft": false,

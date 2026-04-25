@@ -22,6 +22,7 @@ Scope {
             property bool blurEnabled: Config.options.overview.effects.enableBlur
             property bool backdropEnabled: Config.options.overview.effects.enableBackdrop
             property real backdropOpacity: Math.max(0, Math.min(1, Config.options.overview.effects.backdropOpacity))
+            property bool closeOnFocusLoss: Config.options.overview.closeOnFocusLoss ?? true
             screen: modelData
             visible: GlobalStates.overviewOpen
 
@@ -44,7 +45,7 @@ Scope {
                 active: false
                 onCleared: () => {
                     // Only the monitor that owns the grab may close the overview
-                    if (!active && canBeActive)
+                    if (root.closeOnFocusLoss && !active && canBeActive)
                         GlobalStates.overviewOpen = false;
                 }
             }
@@ -102,6 +103,18 @@ Scope {
                     color: "#000000"
                     opacity: root.backdropOpacity
                     z: 0
+                }
+
+                MouseArea {
+                    id: outsideClickCatcher
+                    anchors.fill: parent
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+                    enabled: root.closeOnFocusLoss && GlobalStates.overviewOpen
+                    z: 0
+                    onPressed: mouse => {
+                        GlobalStates.overviewOpen = false;
+                        mouse.accepted = true;
+                    }
                 }
 
                 Keys.onPressed: event => {

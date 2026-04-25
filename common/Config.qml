@@ -109,6 +109,7 @@ Singleton {
             property real scale: root.readReal("overview.scale", 0.16)
             property bool enable: root.readBool("overview.enable", true)
             property bool hideEmptyRows: root.readBool("overview.hideEmptyRows", true)
+            property bool closeOnFocusLoss: root.readBool("overview.closeOnFocusLoss", true)
             property bool useWorkspaceMap: root.readBool("overview.useWorkspaceMap", false)
             property var workspaceMap: root.read("overview.workspaceMap", [])
             property bool orderRightLeft: root.readBool("overview.orderRightLeft", false)
