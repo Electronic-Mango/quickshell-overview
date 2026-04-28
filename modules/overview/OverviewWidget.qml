@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
@@ -29,12 +30,12 @@ Item {
     property real scale: Config.options.overview.scale
     property color activeBorderColor: Appearance.colors.colSecondary
 
-    property real workspaceImplicitWidth: (monitorData?.transform % 2 === 1) ?
+    property real workspaceImplicitWidth: Math.round((monitorData?.transform % 2 === 1) ?
         ((monitor.height / monitor.scale - (monitorData?.reserved?.[0] ?? 0) - (monitorData?.reserved?.[2] ?? 0)) * root.scale) :
-        ((monitor.width / monitor.scale - (monitorData?.reserved?.[0] ?? 0) - (monitorData?.reserved?.[2] ?? 0)) * root.scale)
-    property real workspaceImplicitHeight: (monitorData?.transform % 2 === 1) ?
+        ((monitor.width / monitor.scale - (monitorData?.reserved?.[0] ?? 0) - (monitorData?.reserved?.[2] ?? 0)) * root.scale))
+    property real workspaceImplicitHeight: Math.round((monitorData?.transform % 2 === 1) ?
         ((monitor.width / monitor.scale - (monitorData?.reserved?.[1] ?? 0) - (monitorData?.reserved?.[3] ?? 0)) * root.scale) :
-        ((monitor.height / monitor.scale - (monitorData?.reserved?.[1] ?? 0) - (monitorData?.reserved?.[3] ?? 0)) * root.scale)
+        ((monitor.height / monitor.scale - (monitorData?.reserved?.[1] ?? 0) - (monitorData?.reserved?.[3] ?? 0)) * root.scale))
 
     property real workspaceNumberMargin: 80
     property real workspaceNumberSize: Config.options.overview.workspaceNumberBaseSize * monitor.scale
@@ -459,6 +460,7 @@ Item {
                                 : "transparent"
 
                             Image {
+                                id: workspaceWallpaper
                                 visible: workspace.showWallpaper
                                 anchors.fill: parent
                                 source: root.wallpaperSource(root.emptyWorkspaceWallpaperPath)
@@ -467,6 +469,26 @@ Item {
                                 cache: true
                                 smooth: true
                                 mipmap: true
+                                layer.enabled: workspace.showWallpaper
+                                layer.smooth: true
+                                layer.effect: MultiEffect {
+                                    maskEnabled: true
+                                    maskSource: workspaceWallpaperMask
+                                    maskThresholdMin: 0.5
+                                    maskSpreadAtMin: 1.0
+                                }
+                            }
+
+                            Item {
+                                id: workspaceWallpaperMask
+                                anchors.fill: parent
+                                visible: false
+                                layer.enabled: true
+                                layer.smooth: true
+                                Rectangle {
+                                    anchors.fill: parent
+                                    radius: workspace.radius
+                                }
                             }
 
                             Rectangle {
